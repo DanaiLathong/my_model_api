@@ -8,7 +8,6 @@ import uvicorn
 import os
 
 # --- 1. โหลดโมเดลและ Scaler ---
-# (ใช้ os.path.join เพื่อหาไฟล์ไม่ว่าจะรันจากที่ไหน)
 MODEL_DIR = os.path.join(os.path.dirname(__file__), '..', 'models')
 try:
     model = tf.keras.models.load_model(os.path.join(MODEL_DIR, 'model.keras'))
@@ -20,7 +19,7 @@ except Exception as e:
     scaler = None
 
 # --- 2. สร้างแอป FastAPI ---
-# (นี่คือบรรทัดที่หายไป!)
+# (✅ แก้บั๊กที่ 1: เรามี app = FastAPI() ที่นี่แล้ว)
 app = FastAPI(title="Solar Angle Prediction API")
 
 # --- 3. สร้าง Pydantic Model (ตัวตรวจสอบ Input) ---
@@ -48,13 +47,12 @@ class PredictionInput(BaseModel):
             }
         }
 
-# --- 4. สร้าง Endpoint สำหรับ "/" (หน้าหลัก) ---
+# --- 4. สร้าง Endpoint "/" (หน้าหลัก) ---
 @app.get("/")
 def read_root():
     return {"message": "Welcome to the AI Model API. Go to /docs to see the endpoints."}
 
-# --- 5. สร้าง Endpoint สำหรับ "/predict" ---
-# (นี่คือฟังก์ชันที่คุณเพิ่งแก้ไข)
+# --- 5. สร้าง Endpoint "/predict" ---
 @app.post("/predict")
 async def predict(data: PredictionInput):
     if model is None or scaler is None:
@@ -76,7 +74,8 @@ async def predict(data: PredictionInput):
         # 4. ทำนาย
         prediction_proba = model.predict(features_scaled, verbose=0)
 
-        # 5. หา Index ที่มีค่าน่าจะเป็นสูงสุด (ที่แก้ไขบั๊กแล้ว)
+        # 5. [ โค้ดที่แก้บั๊กแล้ว ]
+        # (✅ แก้บั๊กที่ 2: เราเอา + 1 ออกแล้ว!)
         predicted_index = int(np.argmax(prediction_proba, axis=1)[0])
 
         # 6. ส่งคำตอบ

@@ -1,7 +1,6 @@
-# requirements.txt
 fastapi
 uvicorn[standard]
-tensorflow
 scikit-learn
 numpy
 joblib
+tensorflow-cpu
